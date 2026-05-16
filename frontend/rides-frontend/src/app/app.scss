@@ -1,0 +1,47 @@
+.footer {
+  background: rgba(5,18,9,.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-top: 1px solid rgba(201,160,64,.18);
+  padding: 24px 28px;
+
+  &__inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+
+  &__brand { display: flex; align-items: center; gap: 12px; }
+
+  &__logo {
+    height: 40px;
+    width: auto;
+    filter: drop-shadow(0 1px 4px rgba(0,0,0,.4));
+    opacity: .88;
+  }
+
+  &__brand-text { display: flex; flex-direction: column; }
+  &__title      { font-size: .95rem; font-weight: 800; color: #fff; margin: 0; }
+  &__subtitle   { font-size: .64rem; color: #c9a040; font-weight: 600;
+                  letter-spacing: .6px; text-transform: uppercase; margin: 2px 0 0; }
+
+  &__divider {
+    width: 1px; height: 40px;
+    background: linear-gradient(180deg, transparent, rgba(201,160,64,.25), transparent);
+  }
+
+  &__info { flex: 1; min-width: 180px; text-align: center; }
+  &__desc { font-size: .82rem; color: rgba(255,255,255,.7); margin: 0 0 3px; font-weight: 500; }
+  &__tech { font-size: .7rem; color: rgba(201,160,64,.65); margin: 0; letter-spacing: .2px; }
+
+  &__copy {
+    text-align: right;
+    p { margin: 0; font-size: .8rem; color: rgba(255,255,255,.55); }
+  }
+
+  &__year { font-size: .69rem !important; color: rgba(255,255,255,.3) !important; margin-top: 2px !important; }
+}

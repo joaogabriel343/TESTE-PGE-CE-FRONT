@@ -1,0 +1,331 @@
+// ── Driver page layout ────────────────────────────────────────────────────────
+.page--driver { max-width: 1080px; width: 100%; }
+
+.card--ride   { padding: 0; overflow: hidden; border-radius: 28px; }
+.card--driver { border-top-color: #c9a040; }
+.btn--full    { width: 100%; margin-top: 8px; }
+
+.driver-alert { margin: 0 28px 0; }
+
+// ── Dispatch console (substitui o mapa) ───────────────────────────────────────
+.dispatch-console {
+  position: relative;
+  min-height: 220px;
+  border-radius: 24px;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 20% 20%, rgba(201,160,64,.18), transparent 22%),
+    radial-gradient(circle at 80% 70%, rgba(26,92,42,.16), transparent 24%),
+    linear-gradient(160deg, #eff6f1 0%, #edf4ef 100%);
+  box-shadow: 0 16px 32px rgba(18,42,24,.11);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &__pulse {
+    position: relative;
+    z-index: 1;
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: rgba(26,92,42,.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: driver-pulse 2s ease-in-out infinite;
+  }
+
+  &__pulse-inner {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: rgba(26,92,42,.14);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__taxi {
+    font-size: 2.2rem;
+    animation: driver-bounce 1.6s ease-in-out infinite;
+    display: block;
+  }
+}
+
+@keyframes driver-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(26,92,42,.25); }
+  50%       { box-shadow: 0 0 0 18px rgba(26,92,42,0); }
+}
+
+@keyframes driver-bounce {
+  0%, 100% { transform: translateY(0) rotate(-3deg); }
+  50%       { transform: translateY(-6px) rotate(3deg); }
+}
+
+// ── Seletor de motorista (no aside) ──────────────────────────────────────────
+.driver-selector {
+  margin-top: 16px;
+  padding: 16px 18px;
+  border-radius: 20px;
+  background: rgba(255,255,255,.88);
+  border: 1px solid rgba(26,92,42,.08);
+  box-shadow: 0 10px 24px rgba(18,42,24,.06);
+
+  &__label {
+    display: block;
+    font-size: .68rem;
+    font-weight: 800;
+    color: #7a8880;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    margin-bottom: 8px;
+  }
+}
+
+// ── Info cards do motorista ───────────────────────────────────────────────────
+.driver-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.driver-stat {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: 16px;
+  background: rgba(255,255,255,.88);
+  border: 1px solid rgba(26,92,42,.08);
+  box-shadow: 0 6px 16px rgba(18,42,24,.05);
+
+  &__icon {
+    font-size: 1.3rem;
+    flex-shrink: 0;
+  }
+
+  &__label {
+    margin: 0 0 2px;
+    font-size: .64rem;
+    font-weight: 800;
+    color: #7a8880;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+  }
+
+  &__value {
+    margin: 0;
+    font-size: .8rem;
+    font-weight: 700;
+    color: #22342a;
+
+    &--online { color: #1a5c2a; }
+    &--offline { color: #b71c1c; }
+  }
+}
+
+// ── Active ride ───────────────────────────────────────────────────────────────
+.active-ride {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 8px;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px 18px;
+    background: linear-gradient(135deg, rgba(26,92,42,.08), rgba(26,92,42,.04));
+    border-radius: 16px;
+    border-left: 4px solid #1a5c2a;
+  }
+
+  &__icon {
+    font-size: 2rem;
+    line-height: 1;
+    animation: drive 1.8s ease-in-out infinite;
+  }
+
+  &__title {
+    margin: 0 0 2px;
+    font-size: 1.1rem;
+    font-weight: 900;
+    color: #10261a;
+  }
+
+  &__subtitle {
+    margin: 0;
+    font-size: .82rem;
+    color: #5c6e60;
+  }
+
+  &__card {
+    background: rgba(26,92,42,.04);
+    border: 1.5px solid rgba(26,92,42,.14);
+    border-radius: 16px;
+    padding: 14px 16px;
+  }
+
+  &__row {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  &__row-icon {
+    font-size: .95rem;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  &__row-label {
+    display: block;
+    font-size: .68rem;
+    font-weight: 800;
+    color: #7a8880;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    margin-bottom: 2px;
+  }
+
+  &__row-value {
+    display: block;
+    font-size: .88rem;
+    color: #22342a;
+    line-height: 1.4;
+    font-weight: 500;
+  }
+
+  &__divider {
+    height: 1px;
+    background: rgba(26,92,42,.1);
+    margin: 10px 0;
+  }
+
+  &__driver-badge {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    background: #fff;
+    border: 2px solid #1a5c2a;
+    border-radius: 14px;
+    box-shadow: 0 4px 14px rgba(26,92,42,.1);
+  }
+
+  &__driver-avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: #1a5c2a;
+    color: #fff;
+    font-size: 1.15rem;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  &__driver-name {
+    margin: 0 0 2px;
+    font-size: .95rem;
+    font-weight: 800;
+    color: #10261a;
+  }
+
+  &__driver-license {
+    margin: 0;
+    font-size: .78rem;
+    color: #5c665f;
+  }
+}
+
+@keyframes drive {
+  0%, 100% { transform: translateX(0); }
+  50%       { transform: translateX(6px); }
+}
+
+// ── Ride card actions ─────────────────────────────────────────────────────────
+.ride-card__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.btn--reject {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 18px;
+  border: 1.5px solid rgba(180,30,30,.35);
+  border-radius: 14px;
+  background: rgba(220,53,69,.06);
+  color: #b71c1c;
+  font-size: .86rem;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background .2s, transform .2s;
+
+  &:hover:not(:disabled) {
+    background: rgba(220,53,69,.14);
+    transform: translateY(-1px);
+  }
+  &:disabled { opacity: .5; cursor: not-allowed; }
+}
+
+// ── Toggle badge ──────────────────────────────────────────────────────────────
+.badge--toggle {
+  all: unset;
+  cursor: pointer;
+  padding: 8px 13px;
+  border-radius: 999px;
+  font-size: .76rem;
+  font-weight: 800;
+  &:hover { opacity: .82; }
+}
+
+// ── Panel header / refresh ────────────────────────────────────────────────────
+.panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+
+  .subtitle { margin: 0; }
+}
+
+.btn--refresh {
+  padding: 6px 14px;
+  font-size: .82rem;
+  font-weight: 700;
+  border: 1.5px solid rgba(26,92,42,.3);
+  border-radius: 8px;
+  background: rgba(26,92,42,.06);
+  color: #1a5c2a;
+  cursor: pointer;
+  transition: background .2s;
+
+  &:hover:not(:disabled) { background: rgba(26,92,42,.14); }
+  &:disabled { opacity: .55; cursor: not-allowed; }
+}
+
+// ── Empty state hint ──────────────────────────────────────────────────────────
+.empty-state {
+  &__hint {
+    font-size: .78rem;
+    color: #999;
+    margin: 4px 0 0;
+  }
+}
+
+// ── Responsivo ────────────────────────────────────────────────────────────────
+@media (max-width: 860px) {
+  .driver-stats { grid-template-columns: 1fr; }
+}

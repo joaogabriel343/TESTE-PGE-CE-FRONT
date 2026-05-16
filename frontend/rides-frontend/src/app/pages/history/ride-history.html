@@ -1,0 +1,83 @@
+<div class="page page--history">
+  <div class="card">
+
+    <header class="history-header">
+      <div class="history-header__title-group">
+        <img src="brasao-ce.png" alt="Brasão" class="history-header__logo" />
+        <div>
+          <p class="history-header__eyebrow">PGE Rides</p>
+          <h1 class="history-header__title">Histórico de Corridas</h1>
+        </div>
+      </div>
+      <button class="btn btn--outline" (click)="load()" [disabled]="loading">
+        {{ loading ? 'Carregando...' : '↻ Atualizar' }}
+      </button>
+    </header>
+
+    <div *ngIf="errorMessage" class="alert alert--error">{{ errorMessage }}</div>
+
+    <div *ngIf="loading && rides.length === 0" class="history-empty">
+      <p>Carregando corridas...</p>
+    </div>
+
+    <div *ngIf="!loading && rides.length === 0 && !errorMessage" class="history-empty">
+      <span class="history-empty__icon">🚕</span>
+      <p class="history-empty__text">Nenhuma corrida registrada ainda.</p>
+    </div>
+
+    <div *ngIf="rides.length > 0" class="history-summary">
+      <span class="history-summary__count">{{ rides.length }} corrida{{ rides.length !== 1 ? 's' : '' }}</span>
+    </div>
+
+    <ul *ngIf="rides.length > 0" class="ride-list">
+      <li *ngFor="let ride of rides" class="ride-item">
+
+        <div class="ride-item__header">
+          <span class="ride-item__id">#{{ ride.id }}</span>
+          <span class="ride-item__badge ride-item__badge--{{ ride.status.toLowerCase() }}">
+            {{ statusLabel(ride.status) }}
+          </span>
+          <span class="ride-item__date">{{ formatDate(ride.createdAt) }}</span>
+        </div>
+
+        <div class="ride-item__body">
+          <div class="ride-item__row">
+            <span class="ride-item__icon">👤</span>
+            <div>
+              <p class="ride-item__label">Passageiro</p>
+              <p class="ride-item__value">{{ ride.userId }}</p>
+            </div>
+          </div>
+
+          <div class="ride-item__row" *ngIf="ride.driverId">
+            <span class="ride-item__icon">🚗</span>
+            <div>
+              <p class="ride-item__label">Motorista</p>
+              <p class="ride-item__value">{{ ride.driverId }}</p>
+            </div>
+          </div>
+
+          <div class="ride-item__divider"></div>
+
+          <div class="ride-item__row">
+            <span class="ride-item__icon">📍</span>
+            <div>
+              <p class="ride-item__label">Origem</p>
+              <p class="ride-item__value">{{ ride.pickupAddress }}</p>
+            </div>
+          </div>
+
+          <div class="ride-item__row">
+            <span class="ride-item__icon">🏁</span>
+            <div>
+              <p class="ride-item__label">Destino</p>
+              <p class="ride-item__value">{{ ride.destinationAddress }}</p>
+            </div>
+          </div>
+        </div>
+
+      </li>
+    </ul>
+
+  </div>
+</div>
