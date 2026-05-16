@@ -1,0 +1,75 @@
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 28px;
+  height: 72px;
+  background: rgba(7,26,12,.88);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  color: #fff;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  border-bottom: 1px solid rgba(201,160,64,.2);
+  box-shadow: 0 2px 16px rgba(0,0,0,.35);
+
+  &__brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+  }
+
+  &__logo {
+    height: 46px;
+    width: auto;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,.4));
+    transition: transform .3s ease;
+    &:hover { transform: rotate(-6deg) scale(1.08); }
+  }
+
+  &__title {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: #fff;
+    line-height: 1.2;
+    margin: 0;
+  }
+
+  &__subtitle {
+    font-size: .63rem;
+    color: #c9a040;
+    font-weight: 700;
+    letter-spacing: .7px;
+    text-transform: uppercase;
+    margin: 1px 0 0;
+  }
+
+  &__links {
+    display: flex;
+    gap: 4px;
+    background: rgba(255,255,255,.05);
+    padding: 5px;
+    border-radius: 16px;
+  }
+
+  &__link {
+    color: rgba(255,255,255,.72);
+    text-decoration: none;
+    font-size: .86rem;
+    font-weight: 600;
+    padding: 8px 18px;
+    border-radius: 12px;
+    transition: all .2s ease;
+
+    &:hover { color: #fff; background: rgba(255,255,255,.1); }
+
+    &--active {
+      color: #1a3a20;
+      background: linear-gradient(145deg, #dcb840, #c9a040);
+      font-weight: 800;
+      box-shadow: 0 3px 10px rgba(201,160,64,.4);
+    }
+  }
+}

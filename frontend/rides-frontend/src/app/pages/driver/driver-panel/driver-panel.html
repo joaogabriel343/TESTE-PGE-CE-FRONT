@@ -1,0 +1,194 @@
+<div class="page page--driver">
+  <div class="card card--ride card--driver" [class.card--tracking]="viewState === 'active'">
+
+    <!-- ══ HERO HEADER ═════════════════════════════════════════════════════════ -->
+    <header class="ride-hero">
+      <div class="ride-hero__brand">
+        <img src="brasao-ce.png" alt="Brasão do Estado do Ceará" class="ride-hero__logo" />
+        <div class="ride-hero__text">
+          <p class="ride-hero__eyebrow">Interface do Condutor</p>
+          <h1 class="ride-hero__title">Painel do Motorista</h1>
+          <p class="ride-hero__subtitle">Receba notificações em tempo real e gerencie suas corridas corporativas.</p>
+        </div>
+      </div>
+      <div class="ride-hero__badges">
+        <button class="badge badge--toggle"
+                [class.badge--connected]="isOnline"
+                [class.badge--disconnected]="!isOnline"
+                (click)="toggleOnline()"
+                [title]="isOnline ? 'Clique para ficar Offline' : 'Clique para ficar Online'">
+          {{ isOnline ? 'Online' : 'Offline' }}
+        </button>
+        <span class="status-pill status-pill--soft">Transporte corporativo</span>
+      </div>
+    </header>
+
+    <div *ngIf="errorMessage && viewState !== 'active'" class="alert alert--error driver-alert">
+      {{ errorMessage }}
+    </div>
+
+    <!-- ══ LAYOUT SPLIT ════════════════════════════════════════════════════════ -->
+    <div class="ride-layout" [class.ride-layout--tracking]="viewState === 'active'">
+
+      <!-- ── ASIDE VISUAL (só no estado lista) ───────────────────────────────── -->
+      <aside class="ride-visual driver-visual" *ngIf="viewState === 'list'">
+
+        <!-- Console de despacho (substitui o mapa) -->
+        <div class="dispatch-console">
+          <div class="ride-visual__map-grid"></div>
+          <div class="dispatch-console__pulse">
+            <div class="dispatch-console__pulse-inner">
+              <span class="dispatch-console__taxi">🚖</span>
+            </div>
+          </div>
+          <div class="ride-visual__badge">{{ isOnline ? 'Aguardando corridas' : 'Condutor offline' }}</div>
+        </div>
+
+        <!-- Seletor de motorista -->
+        <div class="driver-selector" *ngIf="drivers.length">
+          <label class="driver-selector__label" for="driverSelect">Motorista logado</label>
+          <select id="driverSelect" class="field__input" [(ngModel)]="selectedDriverId">
+            <option *ngFor="let d of drivers" [value]="d.id">
+              {{ d.name }} — {{ d.license }}
+            </option>
+          </select>
+        </div>
+
+        <!-- Info cards -->
+        <div class="driver-stats">
+          <div class="driver-stat">
+            <span class="driver-stat__icon">📡</span>
+            <div>
+              <p class="driver-stat__label">Conexão</p>
+              <p class="driver-stat__value" [class.driver-stat__value--online]="isOnline"
+                                            [class.driver-stat__value--offline]="!isOnline">
+                {{ isOnline ? 'WebSocket ativo' : 'Desconectado' }}
+              </p>
+            </div>
+          </div>
+          <div class="driver-stat">
+            <span class="driver-stat__icon">🔔</span>
+            <div>
+              <p class="driver-stat__label">Notificações</p>
+              <p class="driver-stat__value">{{ isOnline ? 'Tempo real' : 'Pausadas' }}</p>
+            </div>
+          </div>
+        </div>
+
+      </aside>
+
+      <!-- ── STAGE PRINCIPAL ─────────────────────────────────────────────────── -->
+      <section class="ride-stage">
+
+        <!-- ══ CORRIDA EM ANDAMENTO ════════════════════════════════════════════ -->
+        <div *ngIf="viewState === 'active' && activeRide" class="active-ride">
+
+          <div class="active-ride__header">
+            <div class="active-ride__icon">🚗</div>
+            <div>
+              <h2 class="active-ride__title">Corrida em Andamento</h2>
+              <p class="active-ride__subtitle">Leve o passageiro ao destino</p>
+            </div>
+          </div>
+
+          <div class="active-ride__card">
+            <div class="active-ride__row">
+              <span class="active-ride__row-icon">👤</span>
+              <div>
+                <span class="active-ride__row-label">Passageiro</span>
+                <span class="active-ride__row-value">{{ activeRide.userId }}</span>
+              </div>
+            </div>
+            <div class="active-ride__divider"></div>
+            <div class="active-ride__row">
+              <span class="active-ride__row-icon">📍</span>
+              <div>
+                <span class="active-ride__row-label">Origem</span>
+                <span class="active-ride__row-value">{{ activeRide.pickupAddress }}</span>
+              </div>
+            </div>
+            <div class="active-ride__divider"></div>
+            <div class="active-ride__row">
+              <span class="active-ride__row-icon">🏁</span>
+              <div>
+                <span class="active-ride__row-label">Destino</span>
+                <span class="active-ride__row-value">{{ activeRide.destinationAddress }}</span>
+              </div>
+            </div>
+          </div>
+
+          <div *ngIf="activeDriver" class="active-ride__driver-badge">
+            <div class="active-ride__driver-avatar">{{ activeDriver.name.charAt(0).toUpperCase() }}</div>
+            <div>
+              <p class="active-ride__driver-name">{{ activeDriver.name }}</p>
+              <p class="active-ride__driver-license">🪪 {{ activeDriver.license }}</p>
+            </div>
+          </div>
+
+          <div *ngIf="errorMessage" class="alert alert--error">{{ errorMessage }}</div>
+
+          <button class="btn btn--primary btn--full"
+                  (click)="completeRide()"
+                  [disabled]="completing">
+            {{ completing ? 'Finalizando...' : '✓ Finalizar corrida' }}
+          </button>
+        </div>
+
+        <!-- ══ LISTA DE CORRIDAS PENDENTES ════════════════════════════════════ -->
+        <ng-container *ngIf="viewState === 'list'">
+
+          <div class="panel-header">
+            <p class="subtitle">
+              🕐 Corridas Aguardando Aceitação
+              <span class="count-badge">{{ pendingRides.length }}</span>
+            </p>
+            <button class="btn btn--refresh" (click)="rideState.refresh()" [disabled]="!isOnline">
+              🔄 Atualizar
+            </button>
+          </div>
+
+          <!-- Estado: Offline -->
+          <div *ngIf="!isOnline" class="empty-state">
+            <span class="empty-state__icon">💤</span>
+            <p class="empty-state__text">Você está Offline.</p>
+            <p class="empty-state__hint">Clique no botão <strong>Offline</strong> no topo para começar a receber corridas.</p>
+          </div>
+
+          <!-- Estado: Online sem corridas -->
+          <div *ngIf="isOnline && pendingRides.length === 0" class="empty-state">
+            <span class="empty-state__icon">🚕</span>
+            <p class="empty-state__text">Nenhuma corrida disponível no momento.</p>
+            <p class="empty-state__hint">Novas corridas aparecem automaticamente a cada 5 segundos.</p>
+          </div>
+
+          <!-- Lista de corridas -->
+          <div class="ride-list">
+            <div *ngFor="let ride of pendingRides" class="ride-card">
+              <div class="ride-card__info">
+                <p class="ride-card__id">Corrida #{{ ride.id }}</p>
+                <p class="ride-card__address"><strong>De:</strong> {{ ride.pickupAddress }}</p>
+                <p class="ride-card__address"><strong>Para:</strong> {{ ride.destinationAddress }}</p>
+                <p class="ride-card__user">Passageiro: {{ ride.userId }}</p>
+              </div>
+              <div class="ride-card__actions">
+                <button class="btn btn--gold"
+                        (click)="acceptRide(ride)"
+                        [disabled]="!selectedDriverId">
+                  Aceitar
+                </button>
+                <button class="btn btn--reject"
+                        (click)="rejectRide(ride)"
+                        [disabled]="!selectedDriverId">
+                  Rejeitar
+                </button>
+              </div>
+            </div>
+          </div>
+
+        </ng-container>
+
+      </section>
+    </div>
+
+  </div>
+</div>

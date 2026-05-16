@@ -1,0 +1,298 @@
+<div class="page page--client">
+  <div class="card card--ride" [class.card--tracking]="viewState !== 'form'">
+
+    <header class="ride-hero">
+      <div class="ride-hero__brand">
+        <img src="brasao-ce.png" alt="Brasão do Estado do Ceará" class="ride-hero__logo" />
+        <div class="ride-hero__text">
+          <p class="ride-hero__eyebrow">Interface do passageiro</p>
+          <h1 class="ride-hero__title">Solicitar Corrida</h1>
+          <p class="ride-hero__subtitle">Fluxo pensado como um app de mobilidade: rápido, visual e direto.</p>
+        </div>
+      </div>
+
+      <div class="ride-hero__badges">
+        <span class="status-pill">Ceará</span>
+        <span class="status-pill status-pill--soft">Transporte corporativo</span>
+        <span class="status-pill status-pill--soft">CEP automático</span>
+      </div>
+    </header>
+
+    <div class="ride-layout" [class.ride-layout--tracking]="viewState !== 'form'">
+      <aside class="ride-visual" *ngIf="viewState === 'form'">
+        <div class="ride-visual__map">
+          <div class="ride-visual__map-grid"></div>
+          <div class="ride-visual__pin ride-visual__pin--pickup"></div>
+          <div class="ride-visual__pin ride-visual__pin--destination"></div>
+          <div class="ride-visual__route"></div>
+          <div class="ride-visual__badge">Seu trajeto em foco</div>
+        </div>
+
+        <div class="route-preview">
+          <div class="route-preview__head">
+            <p class="route-preview__label">Resumo da corrida</p>
+            <p class="route-preview__hint">Preencha os pontos e solicite em seguida</p>
+          </div>
+
+          <div class="route-preview__step route-preview__step--pickup">
+            <span class="route-preview__dot"></span>
+            <div>
+              <p class="route-preview__step-title">Origem</p>
+              <p class="route-preview__step-text">Endereço de partida com preenchimento automático via CEP.</p>
+            </div>
+          </div>
+
+          <div class="route-preview__line"></div>
+
+          <div class="route-preview__step route-preview__step--destination">
+            <span class="route-preview__dot route-preview__dot--destination"></span>
+            <div>
+              <p class="route-preview__step-title">Destino</p>
+              <p class="route-preview__step-text">Confirme o local de chegada antes de enviar o pedido.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="ride-visual__note">
+          <p class="ride-visual__note-title">Experiência mais rápida</p>
+          <p class="ride-visual__note-text">A tela agora funciona como um painel de mobilidade, com contexto visual antes do formulário.</p>
+        </div>
+      </aside>
+
+      <section class="ride-stage">
+
+        <!-- ══ ESTADO: AGUARDANDO MOTORISTA ══════════════════════════════════════ -->
+        <div *ngIf="viewState === 'waiting'" class="tracking-screen">
+
+          <div class="tracking-screen__pulse-ring">
+            <div class="tracking-screen__pulse-ring__inner">
+              <span class="tracking-screen__icon">🚗</span>
+            </div>
+          </div>
+
+          <div class="tracking-screen__copy">
+            <h2 class="tracking-screen__title">Procurando motorista...</h2>
+            <p class="tracking-screen__subtitle">Aguarde, um motorista próximo irá aceitar sua corrida</p>
+          </div>
+
+          <div class="countdown" [class.countdown--urgent]="countdownSeconds <= 30">
+            <span class="countdown__label">Tempo restante</span>
+            <span class="countdown__value">{{ countdownDisplay }}</span>
+            <span class="countdown__hint" *ngIf="countdownSeconds === 0">Aguardando confirmação...</span>
+          </div>
+
+          <div class="ride-info-card" *ngIf="activeRide">
+            <div class="ride-info-card__row">
+              <span class="ride-info-card__icon">📍</span>
+              <span class="ride-info-card__text">{{ activeRide.pickupAddress }}</span>
+            </div>
+            <div class="ride-info-card__divider"></div>
+            <div class="ride-info-card__row">
+              <span class="ride-info-card__icon">🏁</span>
+              <span class="ride-info-card__text">{{ activeRide.destinationAddress }}</span>
+            </div>
+          </div>
+
+          <button class="btn btn--ghost btn--full" (click)="cancelTracking()">
+            Cancelar corrida
+          </button>
+
+        </div>
+
+        <!-- ══ ESTADO: MOTORISTA ACEITO ══════════════════════════════════════════ -->
+        <div *ngIf="viewState === 'accepted'" class="tracking-screen tracking-screen--accepted">
+
+          <div class="accepted-check">
+            <span class="accepted-check__icon">✓</span>
+          </div>
+
+          <div class="tracking-screen__copy">
+            <h2 class="tracking-screen__title tracking-screen__title--green">Corrida em andamento!</h2>
+            <p class="tracking-screen__subtitle">Você está a caminho do destino</p>
+          </div>
+
+          <div class="driver-card" *ngIf="activeDriver; else unknownDriver">
+            <div class="driver-card__avatar">
+              {{ activeDriver.name.charAt(0).toUpperCase() }}
+            </div>
+            <div class="driver-card__info">
+              <span class="driver-card__name">{{ activeDriver.name }}</span>
+              <span class="driver-card__license">
+                <span class="driver-card__license-icon">🪪</span>
+                {{ activeDriver.license }}
+              </span>
+            </div>
+          </div>
+
+          <ng-template #unknownDriver>
+            <div class="driver-card" *ngIf="activeRide?.driverId">
+              <div class="driver-card__avatar">M</div>
+              <div class="driver-card__info">
+                <span class="driver-card__name">Motorista confirmado</span>
+                <span class="driver-card__license">ID: {{ activeRide?.driverId }}</span>
+              </div>
+            </div>
+          </ng-template>
+
+          <div class="ride-info-card ride-info-card--accepted" *ngIf="activeRide">
+            <div class="ride-info-card__row">
+              <span class="ride-info-card__icon">📍</span>
+              <span class="ride-info-card__text">{{ activeRide.pickupAddress }}</span>
+            </div>
+            <div class="ride-info-card__divider"></div>
+            <div class="ride-info-card__row">
+              <span class="ride-info-card__icon">🏁</span>
+              <span class="ride-info-card__text">{{ activeRide.destinationAddress }}</span>
+            </div>
+          </div>
+
+          <div class="waiting-hint">
+            <span class="waiting-hint__dot"></span>
+            Aguardando o motorista finalizar a corrida...
+          </div>
+
+          <button class="btn btn--ghost btn--full" style="margin-top:8px" (click)="cancelTracking()">
+            Cancelar corrida
+          </button>
+
+        </div>
+
+        <!-- ══ ESTADO: CORRIDA FINALIZADA ════════════════════════════════════════ -->
+        <div *ngIf="viewState === 'completed'" class="tracking-screen tracking-screen--accepted">
+
+          <div class="accepted-check">
+            <span class="accepted-check__icon">✓</span>
+          </div>
+
+          <div class="tracking-screen__copy">
+            <h2 class="tracking-screen__title tracking-screen__title--green">Corrida finalizada!</h2>
+            <p class="tracking-screen__subtitle">Obrigado por usar o transporte corporativo PGE-CE</p>
+          </div>
+
+        </div>
+
+        <!-- ══ ESTADO: FORMULÁRIO ═════════════════════════════════════════════════ -->
+        <ng-container *ngIf="viewState === 'form'">
+
+          <div *ngIf="errorMessage" class="alert alert--error">{{ errorMessage }}</div>
+
+          <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+
+            <!-- Chips: horário e passageiro -->
+            <div class="trip-chips">
+              <div class="trip-chip">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                Ir agora
+              </div>
+              <label class="trip-chip" [class.trip-chip--invalid]="f['userId'].invalid && f['userId'].touched">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                <select formControlName="userId" class="trip-chip__select">
+                  <option value="">Para quem?</option>
+                  <option *ngFor="let u of mockedUsers" [value]="u.id">{{ u.name }}</option>
+                </select>
+                <svg class="trip-chip__caret" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+              </label>
+            </div>
+            <span class="field__error" *ngIf="f['userId'].invalid && f['userId'].touched" style="display:block;margin-bottom:10px">Selecione um passageiro.</span>
+
+            <!-- Card de endereços no estilo app de mobilidade -->
+            <div class="ride-address-card">
+
+              <div class="addr-track">
+                <span class="addr-track__dot addr-track__dot--pickup"></span>
+                <span class="addr-track__line"></span>
+                <span class="addr-track__dot addr-track__dot--destination"></span>
+              </div>
+
+              <div class="addr-fields-wrap">
+
+                <!-- ── Partida ─────────────────────────────────────── -->
+                <div class="addr-block">
+                  <p class="addr-block__label">Partida</p>
+
+                  <div class="cep-row">
+                    <input type="text" class="addr-input addr-input--cep"
+                           placeholder="CEP de partida (autopreenchimento)" maxlength="9"
+                           (input)="onPickupCepInput($event)" />
+                    <span class="cep-spin" *ngIf="loadingPickupCep">⏳</span>
+                  </div>
+                  <span class="field__error" *ngIf="pickupCepError">{{ pickupCepError }}</span>
+
+                  <div class="addr-row">
+                    <input type="text" formControlName="pickupLogradouro"
+                           class="addr-input"
+                           [class.addr-input--invalid]="f['pickupLogradouro'].invalid && f['pickupLogradouro'].touched"
+                           placeholder="Rua / Avenida" />
+                    <input type="text" formControlName="pickupNumero"
+                           class="addr-input addr-input--sm"
+                           [class.addr-input--invalid]="f['pickupNumero'].invalid && f['pickupNumero'].touched"
+                           placeholder="Nº" />
+                  </div>
+                  <div class="addr-row">
+                    <input type="text" formControlName="pickupComplemento"
+                           class="addr-input" placeholder="Complemento" />
+                    <input type="text" formControlName="pickupBairro"
+                           class="addr-input"
+                           [class.addr-input--invalid]="f['pickupBairro'].invalid && f['pickupBairro'].touched"
+                           placeholder="Bairro" />
+                  </div>
+                  <input type="text" formControlName="pickupCidadeUf"
+                         class="addr-input addr-input--full"
+                         [class.addr-input--invalid]="f['pickupCidadeUf'].invalid && f['pickupCidadeUf'].touched"
+                         placeholder="Cidade / Estado" />
+                </div>
+
+                <div class="addr-sep"></div>
+
+                <!-- ── Destino ─────────────────────────────────────── -->
+                <div class="addr-block">
+                  <p class="addr-block__label addr-block__label--dest">Para onde?</p>
+
+                  <div class="cep-row">
+                    <input type="text" class="addr-input addr-input--cep"
+                           placeholder="CEP de destino (autopreenchimento)" maxlength="9"
+                           (input)="onDestinationCepInput($event)" />
+                    <span class="cep-spin" *ngIf="loadingDestinationCep">⏳</span>
+                  </div>
+                  <span class="field__error" *ngIf="destinationCepError">{{ destinationCepError }}</span>
+
+                  <div class="addr-row">
+                    <input type="text" formControlName="destinationLogradouro"
+                           class="addr-input"
+                           [class.addr-input--invalid]="f['destinationLogradouro'].invalid && f['destinationLogradouro'].touched"
+                           placeholder="Rua / Avenida" />
+                    <input type="text" formControlName="destinationNumero"
+                           class="addr-input addr-input--sm"
+                           [class.addr-input--invalid]="f['destinationNumero'].invalid && f['destinationNumero'].touched"
+                           placeholder="Nº" />
+                  </div>
+                  <div class="addr-row">
+                    <input type="text" formControlName="destinationComplemento"
+                           class="addr-input" placeholder="Complemento" />
+                    <input type="text" formControlName="destinationBairro"
+                           class="addr-input"
+                           [class.addr-input--invalid]="f['destinationBairro'].invalid && f['destinationBairro'].touched"
+                           placeholder="Bairro" />
+                  </div>
+                  <input type="text" formControlName="destinationCidadeUf"
+                         class="addr-input addr-input--full"
+                         [class.addr-input--invalid]="f['destinationCidadeUf'].invalid && f['destinationCidadeUf'].touched"
+                         placeholder="Cidade / Estado" />
+                </div>
+
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn--primary btn--full ride-submit" [disabled]="loading">
+              {{ loading ? 'Processando...' : 'Solicitar Corrida' }}
+            </button>
+
+          </form>
+
+        </ng-container>
+
+      </section>
+    </div>
+
+  </div>
+</div>
