@@ -38,18 +38,25 @@ Interface do passageiro (criar corrida) e interface do motorista (painel em temp
 
 ---
 
-### Como Executar
+## Como Executar
 
-### Com Docker (recomendado)
+> **Pré-requisito:** [Docker Desktop](https://www.docker.com/products/docker-desktop/) instalado e em execução.
+
+1. Crie uma pasta, entre nela e clone os dois repositórios:
 
 ```bash
-# Na raiz do repositório (onde está o docker-compose.yml)
-docker-compose up --build
-
-# Acesse: http://127.0.0.1:4200
+git clone https://github.com/joaogabriel343/TESTE-PGE-CE-BACK.git
+git clone https://github.com/joaogabriel343/TESTE-PGE-CE-FRONT.git
 ```
 
-> Use `127.0.0.1:4200` (não `localhost:4200`) para garantir que o tráfego vai ao container Docker.
+2. Entre na pasta do backend e execute:
+
+```bash
+cd TESTE-PGE-CE-BACK
+docker-compose up --build
+```
+
+Acesse em: **http://localhost:4200**
 
 ### Localmente (modo desenvolvimento)
 
